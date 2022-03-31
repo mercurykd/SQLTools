@@ -123,7 +123,6 @@ def readConnections():
 
     return ordered
 
-
 def getDefaultConnectionName():
     default = connectionsStore.get('default', False)
     if not default:
@@ -343,6 +342,8 @@ class ST(EventListener):
         def createConnection(connectionName, config, settings, callback=None):
             # if DB cli binary could not be found in path a FileNotFoundError is thrown
             try:
+                settingsConnection = config.get('cli_options', {})
+                Utils.merge({'cli_options':settingsConnection}, settings)
                 ST.conn = Connection(connectionName, config, settings=settings)
             except FileNotFoundError as e:
                 # use only first line of the Exception in status message
