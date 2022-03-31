@@ -345,9 +345,6 @@ class ST(EventListener):
                 settingsConnection = config.get('cli_options', {})
                 Utils.merge({'cli_options':settingsConnection}, settings)
                 ST.conn = Connection(connectionName, config, settings=settings)
-                views = Window().views()
-                for view in views:
-                    view.set_status('db', 'db: ' + connectionName + '  ')
             except FileNotFoundError as e:
                 # use only first line of the Exception in status message
                 Window().status_message(__package__ + ": " + str(e).splitlines()[0])
@@ -396,6 +393,10 @@ class ST(EventListener):
 
         if not ST.conn:
             return
+
+        views = Window().views()
+        for view in views:
+            view.set_status('db', 'db: ' + ST.conn.name + '  ')
 
         def afterAllDataHasLoaded():
             ST.completion = Completion(ST.tables, ST.columns, ST.functions, settings=settingsStore)
