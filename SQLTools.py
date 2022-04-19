@@ -133,7 +133,7 @@ def getDefaultConnectionName():
 def createOutput(panel=None, syntax=None, prependText=None):
     onInitialOutput = None
     if not panel:
-        panel, onInitialOutput = getOutputPlace(syntax)
+        panel, onInitialOutput = getOutputPlace(getCurrentSyntax())
     if prependText:
         panel.run_command('append', {'characters': str(prependText)})
 
