@@ -383,6 +383,12 @@ class ST(EventListener):
         promptNext()
 
     @staticmethod
+    def changeStatus(text):
+        views = Window().views()
+        for view in views:
+            view.set_status('db', 'db:' + ST.conn.name + ' (' + text + ')')
+
+    @staticmethod
     def loadConnectionData(callback=None):
         # clear the list of identifiers (in case connection is changed)
         ST.tables = []
@@ -394,13 +400,10 @@ class ST(EventListener):
         if not ST.conn:
             return
 
-        views = Window().views()
-        for view in views:
-            view.set_status('db', 'db: ' + ST.conn.name + '  ')
-
         def afterAllDataHasLoaded():
             ST.completion = Completion(ST.tables, ST.columns, ST.functions, settings=settingsStore)
             logger.info('completions loaded')
+            ST.changeStatus('ok {}/{}/{}'.format(len(ST.tables), len(ST.columns), len(ST.functions)))
             if (callback):
                 callback()
 
@@ -409,6 +412,7 @@ class ST(EventListener):
             nonlocal objectsLoaded
             objectsLoaded += 1
             logger.info('loaded tables : "{0}"'.format(tables))
+            ST.changeStatus('load tables')
             if objectsLoaded == 3:
                 afterAllDataHasLoaded()
 
@@ -417,6 +421,7 @@ class ST(EventListener):
             nonlocal objectsLoaded
             objectsLoaded += 1
             logger.info('loaded columns : "{0}"'.format(columns))
+            ST.changeStatus('load columns')
             if objectsLoaded == 3:
                 afterAllDataHasLoaded()
 
@@ -425,6 +430,7 @@ class ST(EventListener):
             nonlocal objectsLoaded
             objectsLoaded += 1
             logger.info('loaded functions: "{0}"'.format(functions))
+            ST.changeStatus('load functions')
             if objectsLoaded == 3:
                 logger.info('all objects loaded')
                 afterAllDataHasLoaded()
